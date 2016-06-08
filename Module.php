@@ -4,7 +4,6 @@ namespace filsh\yii2\oauth2server;
 
 use \Yii;
 use yii\i18n\PhpMessageSource;
-use  \array_key_exists;
 
 /**
  * For example,
@@ -61,7 +60,7 @@ class Module extends \yii\base\Module
      * @var whether to use JWT tokens
      */
     public $useJwtToken = false;//ADDED
-    
+
     /**
      * @inheritdoc
      */
@@ -81,21 +80,21 @@ class Module extends \yii\base\Module
     {
         if(!$this->has('server')) {
             $storages = [];
-            
+
             if($this->useJwtToken)
             {
                 if(!array_key_exists('access_token', $this->storageMap) || !array_key_exists('public_key', $this->storageMap)) {
-                        throw new \yii\base\InvalidConfigException('access_token and public_key must be set or set useJwtToken to false');
+                    throw new \yii\base\InvalidConfigException('access_token and public_key must be set or set useJwtToken to false');
                 }
                 //define dependencies when JWT is used instead of normal token
                 \Yii::$container->clear('public_key'); //remove old definition
                 \Yii::$container->set('public_key', $this->storageMap['public_key']);
                 \Yii::$container->set('OAuth2\Storage\PublicKeyInterface', $this->storageMap['public_key']);
-
                 \Yii::$container->clear('access_token'); //remove old definition
                 \Yii::$container->set('access_token', $this->storageMap['access_token']);
             }
-            
+
+
             foreach(array_keys($this->storageMap) as $name) {
                 $storages[$name] = \Yii::$container->get($name);
             }
@@ -120,9 +119,9 @@ class Module extends \yii\base\Module
                 $this,
                 $storages,
                 [
-                    'use_jwt_access_tokens' => $this->useJwtToken,//ADDED
                     'token_param_name' => $this->tokenParamName,
                     'access_lifetime' => $this->tokenAccessLifetime,
+                    'use_jwt_access_tokens' => $this->useJwtToken,
                     /** add more ... */
                 ],
                 $grantTypes
